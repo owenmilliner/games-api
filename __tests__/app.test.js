@@ -68,7 +68,7 @@ describe('GET /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Respond with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
+  test('400: Responds with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
     const id = 'bananas';
 
     return request(app)
@@ -79,7 +79,7 @@ describe('GET /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Respond with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
+  test('400: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
     const id = 1000;
 
     return request(app)
@@ -119,6 +119,45 @@ describe('PATCH /api/reviews/:review_id', () => {
             }
           })
         );
+      });
+  });
+
+  test('400: Responds with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
+    const newVotes = { inc_votes: 99 };
+    const id = 'bananas';
+
+    return request(app)
+      .patch(`/api/reviews/${id}`)
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
+      });
+  });
+
+  test('400: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered.', () => {
+    const newVotes = { inc_votes: 99 };
+    const id = 1000;
+
+    return request(app)
+      .patch(`/api/reviews/${id}`)
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Non-existent review_id: 1000. Please try again.');
+      });
+  });
+
+  test('400: Responds with an errorCode and errorMessage when an invalid vote increment type is entered.', () => {
+    const newVotes = { inc_votes: 'ten' };
+    const id = 1000;
+
+    return request(app)
+      .patch(`/api/reviews/${id}`)
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid vote increment value: ten. Must be a number.');
       });
   });
 });
