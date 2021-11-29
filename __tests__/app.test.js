@@ -49,8 +49,6 @@ describe('GET /api/reviews/:review_id', () => {
       .then(({ body }) => {
         expect(body).toBeInstanceOf(Object);
 
-        console.log(body);
-
         expect(body).toEqual(
           expect.objectContaining({
             review: {
@@ -67,6 +65,17 @@ describe('GET /api/reviews/:review_id', () => {
             }
           })
         );
+      });
+  });
+
+  test('400: Respond with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
+    const id = 'bananas';
+
+    return request(app)
+      .get(`/api/reviews/${id}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
       });
   });
 });
