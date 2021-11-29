@@ -78,4 +78,15 @@ describe('GET /api/reviews/:review_id', () => {
         expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
       });
   });
+
+  test('400: Respond with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
+    const id = 1000;
+
+    return request(app)
+      .get(`/api/reviews/${id}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Non-existent review_id: 1000. Please try again.');
+      });
+  });
 });
