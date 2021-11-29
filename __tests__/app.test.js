@@ -17,3 +17,24 @@ describe('GET /api', () => {
       });
   });
 });
+
+describe('GET /api/categories', () => {
+  test('200: Responds with an array of category objects.', () => {
+    return request(app)
+      .get('/api/categories')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.categories).toBeInstanceOf(Array);
+        expect(body.categories).not.toHaveLength(0);
+
+        body.categories.forEach(category => {
+          expect(category).toEqual(
+            expect.objectContaining({
+              slug: expect.any(String),
+              description: expect.any(String)
+            })
+          );
+        });
+      });
+  });
+});
