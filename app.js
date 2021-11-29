@@ -6,4 +6,13 @@ app.use(express.json());
 
 app.use('/api', apiRouter);
 
+app.use((err, req, res, next) => {
+  if (err.errorCode || err.errorMessage) {
+    res.status(err.errorCode).send({ errorMessage: err.errorMessage });
+  } else {
+    console.log(err);
+    res.status(500).send('Internal Server Error.');
+  }
+});
+
 module.exports = app;
