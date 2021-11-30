@@ -190,12 +190,12 @@ describe('GET /api/reviews', () => {
 
   describe('Queries.', () => {
     describe('Sorting.', () => {
-      test.skip('200: Responds with an array of sorted review objects, sorted by the default of "date", when no sort value is specified.', () => {
+      test('200: Responds with an array of sorted review objects, sorted by the default of "date", when no sort value is specified.', () => {
         return request(app)
           .get('/api/reviews')
           .expect(200)
           .then(({ body }) => {
-            expect(body.reviews).toBeSortedBy('created_at');
+            expect(body.reviews).toBeSorted({ key: 'created_at', descending: true });
           });
       });
 
