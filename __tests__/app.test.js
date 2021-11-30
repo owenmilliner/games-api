@@ -335,7 +335,6 @@ describe('GET /api/reviews', () => {
           .get('/api/reviews?category=DeXtErItY')
           .expect(200)
           .then(({ body }) => {
-            console.log(body.reviews);
             expect(body.reviews).toBeSorted({ key: 'created_at', descending: true });
           });
       });

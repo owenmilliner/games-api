@@ -13,3 +13,28 @@ exports.rejectIfNonExistent = (property, value) => {
     errorMessage: `Non-existent ${property}: ${value}. Please try again.`
   });
 };
+
+exports.rejectIfInvalidQueryParameter = queries => {
+  const sort = queries.sort.toLowerCase();
+  const order = queries.order.toUpperCase();
+  const category = queries.category.toLowerCase();
+
+  if (!['created_at', 'owner', 'review_id', 'category', 'votes'].includes(sort)) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid sort parameter.'
+    });
+  }
+  if (!['ASC', 'DESC'].includes(order)) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid order parameter.'
+    });
+  }
+  if (!['%', 'dexterity', 'euro game', 'social deduction', "children's games"].includes(category)) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid category parameter.'
+    });
+  }
+};

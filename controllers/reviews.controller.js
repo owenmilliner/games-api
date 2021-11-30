@@ -1,4 +1,7 @@
-const { rejectIfNaN } = require('../models/error-handling/manage-errors');
+const {
+  rejectIfNaN,
+  rejectIfInvalidQueryParameter
+} = require('../models/error-handling/manage-errors');
 const { fetchReviewById, updateReviewById, fetchReviews } = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
@@ -32,9 +35,9 @@ exports.getReviews = (req, res, next) => {
   queries.order = req.query.order || 'DESC';
   queries.category = req.query.category || '%';
 
-  fetchReviews(queries)
-    .then(reviews => {
-      res.status(200).send({ reviews });
+  Promise.all([fetchReviews(queries), rejectIfInvalidQueryParameter(queries)])
+    .then(result => {
+      res.status(200).send({ reviews: result[0] });
     })
     .catch(next);
 };
