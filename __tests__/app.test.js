@@ -274,6 +274,25 @@ describe('GET /api/reviews', () => {
             expect(body.reviews).toBeSorted({ key: 'created_at', descending: false });
           });
       });
+
+      test('400: Responds with an errorCode and errorMessage when passed an invalid order value.', () => {
+        return request(app)
+          .get('/api/reviews?order=bananas')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.errorMessage).toBe('Invalid order parameter.');
+          });
+      });
+
+      test('200: Responds with an array of review objects, when passed a caseInsensitive parameter.', () => {
+        return request(app)
+          .get('/api/reviews?order=AsC')
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body.reviews);
+            expect(body.reviews).toBeSorted({ key: 'created_at', descending: false });
+          });
+      });
     });
 
     describe('Filtering.', () => {
