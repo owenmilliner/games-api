@@ -77,6 +77,7 @@ describe('GET /api/reviews/:review_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
+        400;
       });
   });
 
@@ -191,7 +192,7 @@ describe('GET /api/reviews', () => {
 
   describe('Queries.', () => {
     describe('Sorting.', () => {
-      test('200: Responds with an array of sorted review objects, sorted by the default of "date", when no sort value is specified.', () => {
+      test('200: Responds with an array of review objects, sorted by the default of "date", when no sort value is specified.', () => {
         return request(app)
           .get('/api/reviews')
           .expect(200)
@@ -200,7 +201,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('200: Responds with an array of sorted review objects, sorted by the column "owner".', () => {
+      test('200: Responds with an array of review objects, sorted by the column "owner".', () => {
         return request(app)
           .get('/api/reviews?sort=owner')
           .expect(200)
@@ -209,7 +210,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('200: Responds with an array of sorted review objects, sorted by the column "review_id".', () => {
+      test('200: Responds with an array of review objects, sorted by the column "review_id".', () => {
         return request(app)
           .get('/api/reviews?sort=review_id')
           .expect(200)
@@ -218,7 +219,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('200: Responds with an array of sorted review objects, sorted by the column "category".', () => {
+      test('200: Responds with an array of review objects, sorted by the column "category".', () => {
         return request(app)
           .get('/api/reviews?sort=category')
           .expect(200)
@@ -227,7 +228,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('200: Responds with an array of sorted review objects, sorted by the column "votes".', () => {
+      test('200: Responds with an array of review objects, sorted by the column "votes".', () => {
         return request(app)
           .get('/api/reviews?sort=votes')
           .expect(200)
@@ -238,7 +239,7 @@ describe('GET /api/reviews', () => {
     });
 
     describe('Ordering.', () => {
-      test('200: Responds with an array of ordered review objects, ordered by the default of "descending', () => {
+      test('200: Responds with an array of review objects, ordered by the default of "descending', () => {
         return request(app)
           .get('/api/reviews')
           .expect(200)
@@ -247,7 +248,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('200: Responds with an array of ordered review objects, ordered by "ascending', () => {
+      test('200: Responds with an array of review objects, ordered by "ascending', () => {
         return request(app)
           .get('/api/reviews?order=ASC')
           .expect(200)
@@ -256,8 +257,32 @@ describe('GET /api/reviews', () => {
           });
       });
     });
-    test.skip('200: Responds with an array of ordered review objects when passed a query of "order" Default: descending.', () => {});
 
-    test.skip('200: Responds with an array of filtered review objects when passed a query of "category"', () => {});
+    describe('Filtering.', () => {
+      test('200: Responds with an array of review objects, filtered by category.', () => {
+        return request(app)
+          .get('/api/reviews?category=dexterity')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews).not.toHaveLength(0);
+
+            body.reviews.forEach(review => {
+              expect(review).toEqual(
+                expect.objectContaining({
+                  owner: expect.any(String),
+                  title: expect.any(String),
+                  review_id: expect.any(Number),
+                  category: 'dexterity',
+                  review_img_url: expect.any(String),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                  comment_count: expect.any(String)
+                })
+              );
+            });
+          });
+      });
+    });
   });
 });

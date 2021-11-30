@@ -30,6 +30,7 @@ exports.getReviews = (req, res, next) => {
   const queries = {};
   queries.sort = req.query.sort || 'created_at';
   queries.order = req.query.order || 'DESC';
+  queries.category = req.query.category || '%';
 
   fetchReviews(queries)
     .then(reviews => {

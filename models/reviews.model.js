@@ -50,6 +50,13 @@ exports.fetchReviews = queries => {
       errorMessage: 'Invalid order parameter.'
     });
   }
+  if (!['%', 'dexterity', 'euro game', 'social deduction', "children's games"]) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid category parameter.'
+    });
+  }
+
   return db
     .query(
       `
@@ -63,7 +70,8 @@ exports.fetchReviews = queries => {
             reviews.votes, 
             (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
         FROM reviews
-        ORDER BY reviews.${queries.sort} ${queries.order}
+    WHERE category LIKE '${queries.category}'
+    ORDER BY reviews.${queries.sort} ${queries.order}
     ;`
     )
     .then(result => {
