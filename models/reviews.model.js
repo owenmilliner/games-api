@@ -2,13 +2,20 @@ const db = require('../db/connection');
 const { rejectIfNaN, rejectIfNonExistent } = require('./error-handling/manage-errors');
 
 exports.fetchReviewById = review_id => {
-  return db.query('SELECT * FROM reviews WHERE review_id = $1', [review_id]).then(result => {
-    if (result.rowCount === 0) {
-      return rejectIfNonExistent('review_id', review_id);
-    } else {
-      return result.rows[0];
-    }
-  });
+  return db
+    .query(
+      `SELECT reviews.*, 
+            (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
+       FROM reviews WHERE review_id = $1`,
+      [review_id]
+    )
+    .then(result => {
+      if (result.rowCount === 0) {
+        return rejectIfNonExistent('review_id', review_id);
+      } else {
+        return result.rows[0];
+      }
+    });
 };
 
 exports.updateReviewById = (votesIncrease, review_id) => {
@@ -31,7 +38,7 @@ exports.updateReviewById = (votesIncrease, review_id) => {
 };
 
 exports.fetchReviews = queries => {
-  if (!['created_at'].includes(queries.sort)) {
+  if (!['created_at', 'owner', 'review_id', 'category', 'votes'].includes(queries.sort)) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: 'Invalid sort parameter.'

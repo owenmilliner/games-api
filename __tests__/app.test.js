@@ -61,7 +61,8 @@ describe('GET /api/reviews/:review_id', () => {
               votes: 1,
               category: 'euro game',
               owner: 'mallionaire',
-              created_at: expect.any(String)
+              created_at: expect.any(String),
+              comment_count: expect.any(String)
             }
           })
         );
@@ -199,12 +200,39 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test.skip('200: Responds with an array of sorted review objects when passed the query "sort_by". Default: date.', () => {
+      test('200: Responds with an array of sorted review objects, sorted by the column "owner".', () => {
         return request(app)
-          .get('/api/reviews')
+          .get('/api/reviews?sort=owner')
           .expect(200)
           .then(({ body }) => {
-            expect(body.reviews).toBeSortedBy('created_at');
+            expect(body.reviews).toBeSorted({ key: 'owner', descending: true });
+          });
+      });
+
+      test('200: Responds with an array of sorted review objects, sorted by the column "review_id".', () => {
+        return request(app)
+          .get('/api/reviews?sort=review_id')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'review_id', descending: true });
+          });
+      });
+
+      test('200: Responds with an array of sorted review objects, sorted by the column "category".', () => {
+        return request(app)
+          .get('/api/reviews?sort=category')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'category', descending: true });
+          });
+      });
+
+      test('200: Responds with an array of sorted review objects, sorted by the column "votes".', () => {
+        return request(app)
+          .get('/api/reviews?sort=votes')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'votes', descending: true });
           });
       });
     });

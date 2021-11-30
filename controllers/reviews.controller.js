@@ -29,7 +29,6 @@ exports.patchReviewById = (req, res, next) => {
 exports.getReviews = (req, res, next) => {
   const queries = {};
   queries.sort = req.query.sort || 'created_at';
-  console.log(queries);
 
   fetchReviews(queries)
     .then(reviews => {
