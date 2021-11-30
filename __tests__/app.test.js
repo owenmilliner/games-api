@@ -79,12 +79,12 @@ describe('GET /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
+  test('404: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
     const id = 1000;
 
     return request(app)
       .get(`/api/reviews/${id}`)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.errorMessage).toBe('Non-existent review_id: 1000. Please try again.');
       });
@@ -135,14 +135,14 @@ describe('PATCH /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered.', () => {
+  test('404: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered.', () => {
     const newVotes = { inc_votes: 99 };
     const id = 1000;
 
     return request(app)
       .patch(`/api/reviews/${id}`)
       .send(newVotes)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.errorMessage).toBe('Non-existent review_id: 1000. Please try again.');
       });
@@ -161,3 +161,5 @@ describe('PATCH /api/reviews/:review_id', () => {
       });
   });
 });
+
+//TO REFACTOR THE ERRORS INTO SEPERATE FUNCTIONS, AND CALL THE FUNC WITHIN THE MODEL.
