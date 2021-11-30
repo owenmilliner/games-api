@@ -44,7 +44,12 @@ exports.fetchReviews = queries => {
       errorMessage: 'Invalid sort parameter.'
     });
   }
-
+  if (!['ASC', 'DESC'].includes(queries.order)) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid order parameter.'
+    });
+  }
   return db
     .query(
       `
@@ -58,7 +63,7 @@ exports.fetchReviews = queries => {
             reviews.votes, 
             (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
         FROM reviews
-        ORDER BY reviews.${queries.sort} DESC
+        ORDER BY reviews.${queries.sort} ${queries.order}
     ;`
     )
     .then(result => {

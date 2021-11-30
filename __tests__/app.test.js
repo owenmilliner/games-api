@@ -237,6 +237,25 @@ describe('GET /api/reviews', () => {
       });
     });
 
+    describe('Ordering.', () => {
+      test('200: Responds with an array of ordered review objects, ordered by the default of "descending', () => {
+        return request(app)
+          .get('/api/reviews')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'created_at', descending: true });
+          });
+      });
+
+      test('200: Responds with an array of ordered review objects, ordered by "ascending', () => {
+        return request(app)
+          .get('/api/reviews?order=ASC')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'created_at', descending: false });
+          });
+      });
+    });
     test.skip('200: Responds with an array of ordered review objects when passed a query of "order" Default: descending.', () => {});
 
     test.skip('200: Responds with an array of filtered review objects when passed a query of "category"', () => {});
