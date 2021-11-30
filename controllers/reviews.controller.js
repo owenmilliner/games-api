@@ -27,7 +27,11 @@ exports.patchReviewById = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  fetchReviews()
+  const queries = {};
+  queries.sort = req.query.sort || 'created_at';
+  console.log(queries);
+
+  fetchReviews(queries)
     .then(reviews => {
       res.status(200).send({ reviews });
     })

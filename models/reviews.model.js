@@ -30,7 +30,14 @@ exports.updateReviewById = (votesIncrease, review_id) => {
     });
 };
 
-exports.fetchReviews = () => {
+exports.fetchReviews = queries => {
+  if (!['created_at'].includes(queries.sort)) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid sort parameter.'
+    });
+  }
+
   return db
     .query(
       `
@@ -43,7 +50,9 @@ exports.fetchReviews = () => {
             reviews.created_at, 
             reviews.votes, 
             (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
-        FROM reviews;`
+        FROM reviews
+        ORDER BY reviews.${queries.sort} DESC
+    ;`
     )
     .then(result => {
       return result.rows;

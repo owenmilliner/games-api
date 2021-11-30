@@ -186,12 +186,31 @@ describe('GET /api/reviews', () => {
           );
         });
       });
-    /*
-    Should accept queries:
-    
-    - `sort_by`, which sorts the reviews by any valid column (defaults to date)
-    - `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-    - `category`, which filters the reviews by the category value specified in the query
-    */
+  });
+
+  describe('Queries.', () => {
+    describe('Sorting.', () => {
+      test.skip('200: Responds with an array of sorted review objects, sorted by the default of "date", when no sort value is specified.', () => {
+        return request(app)
+          .get('/api/reviews')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSortedBy('created_at');
+          });
+      });
+
+      test.skip('200: Responds with an array of sorted review objects when passed the query "sort_by". Default: date.', () => {
+        return request(app)
+          .get('/api/reviews')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSortedBy('created_at');
+          });
+      });
+    });
+
+    test.skip('200: Responds with an array of ordered review objects when passed a query of "order" Default: descending.', () => {});
+
+    test.skip('200: Responds with an array of filtered review objects when passed a query of "category"', () => {});
   });
 });
