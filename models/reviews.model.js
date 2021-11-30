@@ -55,7 +55,7 @@ exports.fetchReviews = queries => {
       errorMessage: 'Invalid order parameter.'
     });
   }
-  if (!['%', 'dexterity', 'euro game', 'social deduction', "children's games"]) {
+  if (!['%', 'dexterity', 'euro game', 'social deduction', "children's games"].includes(category)) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: 'Invalid category parameter.'

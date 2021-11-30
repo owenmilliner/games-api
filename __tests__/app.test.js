@@ -320,6 +320,25 @@ describe('GET /api/reviews', () => {
             });
           });
       });
+
+      test('400: Responds with an errorCode and errorMessage when passed an invalid category value.', () => {
+        return request(app)
+          .get('/api/reviews?category=bananas')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.errorMessage).toBe('Invalid category parameter.');
+          });
+      });
+
+      test('200: Responds with an array of review objects, when passed a caseInsensitive parameter.', () => {
+        return request(app)
+          .get('/api/reviews?category=DeXtErItY')
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body.reviews);
+            expect(body.reviews).toBeSorted({ key: 'created_at', descending: true });
+          });
+      });
     });
   });
 });
