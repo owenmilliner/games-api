@@ -236,6 +236,24 @@ describe('GET /api/reviews', () => {
             expect(body.reviews).toBeSorted({ key: 'votes', descending: true });
           });
       });
+
+      test('400: Responds with an errorCode and errorMessage when passed an invalid sort value.', () => {
+        return request(app)
+          .get('/api/reviews?sort=bananas')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.errorMessage).toBe('Invalid sort parameter.');
+          });
+      });
+
+      test('200: Responds with an array of review objects, when passed a caseInsensitive parameter.', () => {
+        return request(app)
+          .get('/api/reviews?sort=vOtEs')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted({ key: 'votes', descending: true });
+          });
+      });
     });
 
     describe('Ordering.', () => {

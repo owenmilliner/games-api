@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { sort, filter } = require('../db/data/test-data/categories');
 const { rejectIfNaN, rejectIfNonExistent } = require('./error-handling/manage-errors');
 
 exports.fetchReviewById = review_id => {
@@ -38,13 +39,17 @@ exports.updateReviewById = (votesIncrease, review_id) => {
 };
 
 exports.fetchReviews = queries => {
-  if (!['created_at', 'owner', 'review_id', 'category', 'votes'].includes(queries.sort)) {
+  const sort = queries.sort.toLowerCase();
+  const order = queries.order.toUpperCase();
+  const category = queries.category.toLowerCase();
+
+  if (!['created_at', 'owner', 'review_id', 'category', 'votes'].includes(sort)) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: 'Invalid sort parameter.'
     });
   }
-  if (!['ASC', 'DESC'].includes(queries.order)) {
+  if (!['ASC', 'DESC'].includes(order)) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: 'Invalid order parameter.'
@@ -70,8 +75,8 @@ exports.fetchReviews = queries => {
             reviews.votes, 
             (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
         FROM reviews
-    WHERE category LIKE '${queries.category}'
-    ORDER BY reviews.${queries.sort} ${queries.order}
+    WHERE category LIKE '${category}'
+    ORDER BY reviews.${sort} ${order}
     ;`
     )
     .then(result => {
