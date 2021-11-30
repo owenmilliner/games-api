@@ -1,5 +1,5 @@
 const { rejectIfNaN } = require('../models/error-handling/manage-errors');
-const { fetchReviewById, updateReviewById } = require('../models/reviews.model');
+const { fetchReviewById, updateReviewById, fetchReviews } = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
@@ -22,6 +22,14 @@ exports.patchReviewById = (req, res, next) => {
   ])
     .then(result => {
       res.status(200).send({ review: result[0] });
+    })
+    .catch(next);
+};
+
+exports.getReviews = (req, res, next) => {
+  fetchReviews()
+    .then(reviews => {
+      res.status(200).send({ reviews });
     })
     .catch(next);
 };

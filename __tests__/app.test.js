@@ -162,4 +162,36 @@ describe('PATCH /api/reviews/:review_id', () => {
   });
 });
 
-//TO REFACTOR THE ERRORS INTO SEPERATE FUNCTIONS, AND CALL THE FUNC WITHIN THE MODEL.
+describe('GET /api/reviews', () => {
+  test('200: Responds with an array of review objects. ', () => {
+    return request(app)
+      .get('/api/reviews')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeInstanceOf(Array);
+        expect(body.reviews).not.toHaveLength(0);
+
+        body.reviews.forEach(review => {
+          expect(review).toEqual(
+            expect.objectContaining({
+              owner: expect.any(String),
+              title: expect.any(String),
+              review_id: expect.any(Number),
+              category: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String)
+            })
+          );
+        });
+      });
+    /*
+    Should accept queries:
+    
+    - `sort_by`, which sorts the reviews by any valid column (defaults to date)
+    - `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
+    - `category`, which filters the reviews by the category value specified in the query
+    */
+  });
+});
