@@ -474,9 +474,7 @@ describe('GET /api/users', () => {
         body.users.forEach(user => {
           expect(user).toEqual(
             expect.objectContaining({
-              username: expect.any(String),
-              name: expect.any(String),
-              avatar_url: expect.any(String)
+              username: expect.any(String)
             })
           );
         });
@@ -499,6 +497,40 @@ describe('GET /api/users/:username', () => {
             avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
           }
         });
+      });
+  });
+
+  test('404: Responds with an errorCode and errorMessage when the user does not exist.', () => {
+    const username = 'owen';
+
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toEqual('Non-existent username: owen. Please try again.');
+      });
+  });
+});
+
+describe('PATCH /api/comments/:comment_id', () => {
+  test('200: Responds with an updated comment object.', () => {
+    const comment_id = 1;
+    const commentUpdateData = { inc_votes: 100 };
+
+    return request(app)
+      .patch(`/api/comments/${comment_id}`)
+      .send(commentUpdateData)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            body: 'I loved this game too!',
+            votes: 116,
+            author: 'bainesface',
+            review_id: 2,
+            created_at: expect.any(String)
+          })
+        );
       });
   });
 });
