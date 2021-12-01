@@ -1,6 +1,6 @@
+const { response } = require('../app');
 const db = require('../db/connection');
-const { sort, filter } = require('../db/data/test-data/categories');
-const { rejectIfNaN, rejectIfNonExistent } = require('./error-handling/manage-errors');
+const { rejectIfNonExistent } = require('./error-handling/manage-errors');
 
 exports.fetchReviewById = review_id => {
   return db
@@ -62,5 +62,29 @@ exports.fetchReviews = queries => {
     )
     .then(result => {
       return result.rows;
+    });
+};
+
+exports.fetchReviewComments = review_id => {
+  return db
+    .query(
+      `
+      SELECT 
+        comment_id,
+        votes,
+        created_at,
+        author,
+        body
+     FROM comments
+     WHERE review_id = $1
+     ;`,
+      [review_id]
+    )
+    .then(result => {
+      if (result.rowCount === 0) {
+        return rejectIfNonExistent('review_id', review_id);
+      } else {
+        return result.rows;
+      }
     });
 };

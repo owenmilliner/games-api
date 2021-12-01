@@ -289,7 +289,6 @@ describe('GET /api/reviews', () => {
           .get('/api/reviews?order=AsC')
           .expect(200)
           .then(({ body }) => {
-            console.log(body.reviews);
             expect(body.reviews).toBeSorted({ key: 'created_at', descending: false });
           });
       });
@@ -339,5 +338,29 @@ describe('GET /api/reviews', () => {
           });
       });
     });
+  });
+});
+
+describe('GET /api/reviews/:review_id/comments', () => {
+  test('200: Responds with an array of comments for the given review_id.', () => {
+    const id = 2;
+
+    return request(app)
+      .get(`/api/reviews/${id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).not.toHaveLength(0);
+
+        body.comments.forEach(comment => {
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String)
+          });
+        });
+      });
   });
 });
