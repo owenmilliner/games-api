@@ -1,5 +1,5 @@
 exports.rejectIfNaN = (property, value) => {
-  if (isNaN(Number(value))) {
+  if (isNaN(Number(value)) || Number(value) % 1 !== 0) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: `Invalid ${property}: ${value}. Must be a number.`

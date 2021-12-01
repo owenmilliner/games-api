@@ -385,4 +385,15 @@ describe('GET /api/reviews/:review_id/comments', () => {
         expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
       });
   });
+
+  test('400: Responds with an errorCode and errorMessage when a float number is passed as a review_id.', () => {
+    const id = '2.5';
+
+    return request(app)
+      .get(`/api/reviews/${id}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid review_id: 2.5. Must be a number.');
+      });
+  });
 });
