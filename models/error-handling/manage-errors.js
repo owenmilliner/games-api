@@ -31,7 +31,22 @@ exports.rejectIfInvalidQueryParameter = queries => {
       errorMessage: 'Invalid order parameter.'
     });
   }
-  if (!['%', 'dexterity', 'euro game', 'social deduction', "children's games"].includes(category)) {
+  if (
+    ![
+      '%',
+      'dexterity',
+      'euro game',
+      'social deduction',
+      "children's games",
+      'strategy',
+      'hidden-roles',
+      'dexterity',
+      'push-our-luck',
+      'roll-and-write',
+      'deck-building',
+      'engine-building'
+    ].includes(category)
+  ) {
     return Promise.reject({
       errorCode: 400,
       errorMessage: 'Invalid category parameter.'

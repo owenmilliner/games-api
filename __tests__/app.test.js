@@ -411,7 +411,6 @@ describe('POST /api/reviews/:review_id/comments', () => {
       .send(comment)
       .expect(201)
       .then(({ body }) => {
-        console.log(body);
         expect(body).toEqual(
           expect.objectContaining({
             comment: {
@@ -424,6 +423,25 @@ describe('POST /api/reviews/:review_id/comments', () => {
             }
           })
         );
+      });
+  });
+});
+
+describe('DELETE /api/comments/comment_id', () => {
+  test('204: Responds with no content, and deletes the comment of the given id.', () => {
+    const id = 6;
+
+    return request(app).delete(`/api/comments/${id}`).expect(204);
+  });
+
+  test('404: Responds with errorCode and errorMessage when given a non-existent comment_id.', () => {
+    const id = 10;
+
+    return request(app)
+      .delete(`/api/comments/${id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Non-existent comment_id: 10. Please try again.');
       });
   });
 });
