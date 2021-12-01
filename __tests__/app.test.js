@@ -483,3 +483,22 @@ describe('GET /api/users', () => {
       });
   });
 });
+
+describe('GET /api/users/:username', () => {
+  test('200: Responds with a user object corresponding to the given username.', () => {
+    const username = 'bainesface';
+
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          user: {
+            username: 'bainesface',
+            name: 'sarah',
+            avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+          }
+        });
+      });
+  });
+});
