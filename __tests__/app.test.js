@@ -16,6 +16,22 @@ describe('GET /api', () => {
         expect(body.message).toBe('Welcome to my games API!');
       });
   });
+
+  test('200: Responds with an object containing all of the endpoints on the server.', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(
+          expect.objectContaining({
+            api: expect.any(Array),
+            categories: expect.any(Array),
+            reviews: expect.any(Array),
+            comments: expect.any(Array)
+          })
+        );
+      });
+  });
 });
 
 describe('GET /api/categories', () => {
