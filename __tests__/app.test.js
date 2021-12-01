@@ -363,4 +363,26 @@ describe('GET /api/reviews/:review_id/comments', () => {
         });
       });
   });
+
+  test('404: Responds with an errorCode and errorMessage when a valid review_id is entered, but there are no comments found.', () => {
+    const id = 1;
+
+    return request(app)
+      .get(`/api/reviews/${id}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Non-existent comments for review_id: 1. Please try again.');
+      });
+  });
+
+  test('400: Responds with an errorCode and errorMessage when an invalid review_id is entered.', () => {
+    const id = 'bananas';
+
+    return request(app)
+      .get(`/api/reviews/${id}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
+      });
+  });
 });

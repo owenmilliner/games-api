@@ -1,6 +1,7 @@
 const {
   rejectIfNaN,
-  rejectIfInvalidQueryParameter
+  rejectIfInvalidQueryParameter,
+  rejectIfNonExistent
 } = require('../models/error-handling/manage-errors');
 const {
   fetchReviewById,

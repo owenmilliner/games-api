@@ -82,7 +82,7 @@ exports.fetchReviewComments = review_id => {
     )
     .then(result => {
       if (result.rowCount === 0) {
-        return rejectIfNonExistent('review_id', review_id);
+        return rejectIfNonExistent('comments for review_id', review_id);
       } else {
         return result.rows;
       }
