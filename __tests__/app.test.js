@@ -397,3 +397,33 @@ describe('GET /api/reviews/:review_id/comments', () => {
       });
   });
 });
+
+describe('POST /api/reviews/:review_id/comments', () => {
+  test('201: Responds with a newly created comment object.', () => {
+    const id = 1;
+    const comment = {
+      username: 'bainesface',
+      body: 'Absolutely incredible!'
+    };
+
+    return request(app)
+      .post(`/api/reviews/${id}/comments`)
+      .send(comment)
+      .expect(201)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body).toEqual(
+          expect.objectContaining({
+            comment: {
+              comment_id: expect.any(Number),
+              body: 'Absolutely incredible!',
+              votes: 0,
+              author: 'bainesface',
+              review_id: 1,
+              created_at: expect.any(String)
+            }
+          })
+        );
+      });
+  });
+});

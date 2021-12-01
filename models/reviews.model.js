@@ -1,4 +1,3 @@
-const { response } = require('../app');
 const db = require('../db/connection');
 const { rejectIfNonExistent } = require('./error-handling/manage-errors');
 
@@ -86,5 +85,24 @@ exports.fetchReviewComments = review_id => {
       } else {
         return result.rows;
       }
+    });
+};
+
+exports.insertReviewComment = (review_id, comment) => {
+  const { username, body } = comment;
+
+  return db
+    .query(
+      `
+        INSERT INTO comments
+            (author, review_id, body)
+        VALUES
+            ($1, $2, $3)
+        RETURNING *
+       ;`,
+      [username, review_id, body]
+    )
+    .then(result => {
+      return result.rows[0];
     });
 };

@@ -1,13 +1,13 @@
 const {
   rejectIfNaN,
-  rejectIfInvalidQueryParameter,
-  rejectIfNonExistent
+  rejectIfInvalidQueryParameter
 } = require('../models/error-handling/manage-errors');
 const {
   fetchReviewById,
   updateReviewById,
   fetchReviews,
-  fetchReviewComments
+  fetchReviewComments,
+  insertReviewComment
 } = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
@@ -54,6 +54,17 @@ exports.getReviewComments = (req, res, next) => {
   Promise.all([fetchReviewComments(review_id), rejectIfNaN('review_id', review_id)])
     .then(result => {
       res.status(200).send({ comments: result[0] });
+    })
+    .catch(next);
+};
+
+exports.postReviewComment = (req, res, next) => {
+  const { review_id } = req.params;
+  const comment = req.body;
+
+  Promise.all([insertReviewComment(review_id, comment), rejectIfNaN('review_id', review_id)])
+    .then(result => {
+      res.status(201).send({ comment: result[0] });
     })
     .catch(next);
 };
