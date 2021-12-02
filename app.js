@@ -1,11 +1,10 @@
 const express = require('express');
-const apiRouter = require('./routers/api.router');
+const baseRouter = require('./routers/base.router');
 const app = express();
 
 app.use(express.json());
 
-app.use('/api', apiRouter);
-app.use('/api', apiRouter);
+app.use('/', baseRouter);
 
 app.use((err, req, res, next) => {
   if (err.errorCode || err.errorMessage) {
