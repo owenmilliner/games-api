@@ -1,7 +1,5 @@
-const categoriesRouter = require('../routers/categories.router');
-
 exports.fetchEndpoints = stacks => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const welcomeResponse = {
       message: 'Welcome to my games API!',
       endpoints: { api: ['get: /'], categories: [], reviews: [], comments: [], users: [] }
