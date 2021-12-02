@@ -52,4 +52,11 @@ exports.rejectIfInvalidQueryParameter = queries => {
       errorMessage: 'Invalid category parameter.'
     });
   }
+  if (queries.limit < 1 || queries > 50) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage:
+        'Out of bounds for limit parameter. Must be a number between 1 and 50 (inclusive).'
+    });
+  }
 };

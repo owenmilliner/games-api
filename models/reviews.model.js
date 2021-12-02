@@ -41,6 +41,10 @@ exports.fetchReviews = queries => {
   const sort = queries.sort.toLowerCase();
   const order = queries.order.toUpperCase();
   const category = queries.category.toLowerCase();
+  const { limit } = queries;
+
+  let page = queries.page * limit;
+  page -= limit;
 
   return db
     .query(
@@ -53,14 +57,36 @@ exports.fetchReviews = queries => {
             reviews.review_img_url, 
             reviews.created_at, 
             reviews.votes, 
-            (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count 
+            (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count
         FROM reviews
     WHERE category LIKE '${category}'
     ORDER BY reviews.${sort} ${order}
+    LIMIT ${queries.limit} OFFSET ${page}
     ;`
     )
     .then(result => {
       return result.rows;
+    });
+};
+
+exports.fetchReviewsCount = queries => {
+  const category = queries.category.toLowerCase();
+
+  return db
+    .query(
+      `
+        SELECT 
+        COUNT(*) OVER() AS total_count
+        FROM reviews
+        WHERE category LIKE '${category}'
+        ;`
+    )
+    .then(result => {
+      if (queries.total_count) {
+        return result.rows[0];
+      } else {
+        return { unwanted_count: 0 };
+      }
     });
 };
 

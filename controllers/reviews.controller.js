@@ -7,7 +7,8 @@ const {
   updateReviewById,
   fetchReviews,
   fetchReviewComments,
-  insertReviewComment
+  insertReviewComment,
+  fetchReviewsCount
 } = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
@@ -40,10 +41,23 @@ exports.getReviews = (req, res, next) => {
   queries.sort = req.query.sort || 'created_at';
   queries.order = req.query.order || 'DESC';
   queries.category = req.query.category || '%';
+  queries.limit = req.query.limit || 10;
+  queries.page = req.query.page || 1;
+  queries.total_count = req.query.total_count || false;
 
-  Promise.all([fetchReviews(queries), rejectIfInvalidQueryParameter(queries)])
+  Promise.all([
+    fetchReviews(queries),
+    fetchReviewsCount(queries),
+    rejectIfNaN('limit', queries.limit),
+    rejectIfNaN('page', queries.page),
+    rejectIfInvalidQueryParameter(queries)
+  ])
     .then(result => {
-      res.status(200).send({ reviews: result[0] });
+      if (result[1].total_count) {
+        res.status(200).send({ reviews: result[0], total_count: result[1].total_count });
+      } else {
+        res.status(200).send({ reviews: result[0] });
+      }
     })
     .catch(next);
 };

@@ -354,6 +354,109 @@ describe('GET /api/reviews', () => {
           });
       });
     });
+
+    describe('Pagination', () => {
+      test('200: Responds with an array of review objects, with results limited to the default of 10.', () => {
+        return request(app)
+          .get('/api/reviews')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBeGreaterThan(0);
+            expect(body.reviews.length).toBeLessThan(11);
+
+            body.reviews.forEach(review => {
+              expect(review).toEqual(
+                expect.objectContaining({
+                  owner: expect.any(String),
+                  title: expect.any(String),
+                  review_id: expect.any(Number),
+                  category: expect.any(String),
+                  review_img_url: expect.any(String),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                  comment_count: expect.any(String)
+                })
+              );
+            });
+          });
+      });
+
+      test('200: Responds with an array of review objects, with results limited to a value of 20.', () => {
+        return request(app)
+          .get('/api/reviews?limit=20')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBeGreaterThan(0);
+            expect(body.reviews.length).toBeLessThan(21);
+
+            body.reviews.forEach(review => {
+              expect(review).toEqual(
+                expect.objectContaining({
+                  owner: expect.any(String),
+                  title: expect.any(String),
+                  review_id: expect.any(Number),
+                  category: expect.any(String),
+                  review_img_url: expect.any(String),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                  comment_count: expect.any(String)
+                })
+              );
+            });
+          });
+      });
+
+      test('200: Responds with an array of review objects, with results limited to a value of 2, and defaulting to page 1.', () => {
+        return request(app)
+          .get('/api/reviews?sort=review_id&order=ASC&limit=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBeGreaterThan(0);
+            expect(body.reviews.length).toBeLessThan(3);
+
+            expect(body.reviews[0].review_id).toBe(1);
+            expect(body.reviews[1].review_id).toBe(2);
+          });
+      });
+
+      test('200: Responds with an array of review objects, with results limited to a value of 2, and selection of page 3.', () => {
+        return request(app)
+          .get('/api/reviews?sort=review_id&order=ASC&limit=2&page=3')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBeGreaterThan(0);
+            expect(body.reviews.length).toBeLessThan(3);
+
+            expect(body.reviews[0].review_id).toBe(5);
+            expect(body.reviews[1].review_id).toBe(6);
+          });
+      });
+
+      test('200: Responds with an array of review objects, with an added "total_count" property.', () => {
+        return request(app)
+          .get('/api/reviews?category=social deduction&total_count=true&limit=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBeGreaterThan(0);
+            expect(body.reviews.length).toBeLessThan(3);
+            expect(body.total_count).toBe('11');
+          });
+      });
+
+      test('200: Responds with an array of review objects, without total_count (as default).', () => {
+        return request(app)
+          .get('/api/reviews')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.hasOwnProperty('total_count')).toBe(false);
+          });
+      });
+    });
   });
 });
 
