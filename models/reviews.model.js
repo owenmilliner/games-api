@@ -41,9 +41,7 @@ exports.fetchReviews = queries => {
   const sort = queries.sort.toLowerCase();
   const order = queries.order.toUpperCase();
   const category = queries.category.toLowerCase();
-  console.log(category);
   category.replace(/^%20$/g, ' ');
-  console.log(category);
   const { limit } = queries;
 
   let page = queries.page * limit;
