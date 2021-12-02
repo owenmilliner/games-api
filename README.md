@@ -54,3 +54,8 @@ You will need to create _two_ `.env` files for your project: `.env.test` and `.e
 If you would like to make use of the pre-built tests within the project, ensure the correct dependencies are installed, and run the command:
 
 `npm test`
+
+### Additional Information.
+
+- Note that Node.js needs to be at least version 16.11.1
+- Note that Postgres needs to be at least version 14.0
