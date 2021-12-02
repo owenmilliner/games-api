@@ -1,5 +1,4 @@
 const { fetchEndpoints } = require('../models/api.model');
-const apiRouter = require('../routers/api.router');
 const categoriesRouter = require('../routers/categories.router');
 const commentsRouter = require('../routers/comments.router');
 const reviewsRouter = require('../routers/reviews.router');
@@ -18,4 +17,8 @@ exports.getMessage = (req, res, next) => {
       res.status(200).send(result);
     })
     .catch(next);
+};
+
+exports.welcome = (req, res, next) => {
+  res.status(200).send({ greeting: 'Welcome to my very first API!' });
 };
