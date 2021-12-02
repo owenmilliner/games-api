@@ -313,7 +313,7 @@ describe('GET /api/reviews', () => {
     describe('Filtering.', () => {
       test('200: Responds with an array of review objects, filtered by category.', () => {
         return request(app)
-          .get('/api/reviews?category=dexterity')
+          .get('/api/reviews?category=social deduction')
           .expect(200)
           .then(({ body }) => {
             expect(body.reviews).toBeInstanceOf(Array);
@@ -325,7 +325,7 @@ describe('GET /api/reviews', () => {
                   owner: expect.any(String),
                   title: expect.any(String),
                   review_id: expect.any(Number),
-                  category: 'dexterity',
+                  category: 'social deduction',
                   review_img_url: expect.any(String),
                   created_at: expect.any(String),
                   votes: expect.any(Number),

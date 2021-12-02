@@ -1,18 +1,21 @@
-exports.getMessage = (req, res) => {
-  res.status(200).send({
-    message: 'Welcome to my games API!',
-    endpoints: {
-      api: ['/api'],
-      categories: ['GET /api/categories'],
-      reviews: [
-        'GET /api/reviews',
-        'GET /api/reviews/:review_id',
-        'PATCH /api/reviews/:review_id',
-        'GET /api/reviews/:review_id/comments',
-        'POST /api/reviews/:review_id/comments'
-      ],
-      comments: ['DELETE /api/comments/:comment_id', 'PATCH /api/comments/:comment_id'],
-      users: ['GET /api/users', 'GET /apo/users/:username']
-    }
-  });
+const { fetchEndpoints } = require('../models/api.model');
+const apiRouter = require('../routers/api.router');
+const categoriesRouter = require('../routers/categories.router');
+const commentsRouter = require('../routers/comments.router');
+const reviewsRouter = require('../routers/reviews.router');
+const usersRouter = require('../routers/users.router');
+
+exports.getMessage = (req, res, next) => {
+  const stacks = {
+    categories: categoriesRouter.stack,
+    reviews: reviewsRouter.stack,
+    comments: commentsRouter.stack,
+    users: usersRouter.stack
+  };
+
+  fetchEndpoints(stacks)
+    .then(result => {
+      res.status(200).send(result);
+    })
+    .catch(next);
 };
