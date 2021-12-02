@@ -313,7 +313,7 @@ describe('GET /api/reviews', () => {
     describe('Filtering.', () => {
       test('200: Responds with an array of review objects, filtered by category.', () => {
         return request(app)
-          .get('/api/reviews?category=social deduction')
+          .get('/api/reviews?category=social%20deduction')
           .expect(200)
           .then(({ body }) => {
             expect(body.reviews).toBeInstanceOf(Array);
@@ -438,7 +438,7 @@ describe('GET /api/reviews', () => {
 
       test('200: Responds with an array of review objects, with an added "total_count" property.', () => {
         return request(app)
-          .get('/api/reviews?category=social deduction&total_count=true&limit=2')
+          .get('/api/reviews?category=social%20deduction&total_count=true&limit=2')
           .expect(200)
           .then(({ body }) => {
             expect(body.reviews).toBeInstanceOf(Array);
