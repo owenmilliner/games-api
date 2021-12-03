@@ -637,3 +637,37 @@ describe('PATCH /api/comments/:comment_id', () => {
       });
   });
 });
+
+describe('POST /api/reviews', () => {
+  test('201: Responds with the newly created review, completed with the given property values in addition to the default.', () => {
+    const review = {
+      owner: 'mallionaire',
+      title: 'Timeless classic.',
+      review_body: `OpenTTD is a game which was created in 2004, yet somehow still holds it's weight as one of the greatest transport management games ever created.`,
+      designer: 'OpenTTD',
+      category: 'dexterity'
+    };
+
+    return request(app)
+      .post(`/api/reviews`)
+      .send(review)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(
+          expect.objectContaining({
+            review: {
+              owner: 'mallionaire',
+              title: 'Timeless classic.',
+              review_body: `OpenTTD is a game which was created in 2004, yet somehow still holds it's weight as one of the greatest transport management games ever created.`,
+              designer: 'OpenTTD',
+              category: 'dexterity',
+              review_id: 14,
+              created_at: expect.any(String),
+              comment_count: '0',
+              votes: 0
+            }
+          })
+        );
+      });
+  });
+});

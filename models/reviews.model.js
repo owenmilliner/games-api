@@ -133,3 +133,40 @@ exports.insertReviewComment = (review_id, comment) => {
       return result.rows[0];
     });
 };
+
+exports.insertReview = review => {
+  const { owner, title, review_body, designer, category } = review;
+
+  console.log(owner);
+  console.log(title);
+  console.log(review_body);
+  console.log(designer);
+  console.log(category);
+
+  return db
+    .query(
+      `
+        INSERT INTO reviews
+            (owner, title, review_body, designer, category)
+        VALUES
+            ($1, $2, $3, $4, $5)
+        RETURNING 
+            review_id, 
+            owner, 
+            title, 
+            review_body, 
+            designer, 
+            category,
+            votes,
+            created_at,
+            (SELECT COUNT(*) FROM comments WHERE comments.review_id=reviews.review_id) AS comment_count
+       ;`,
+      [owner, title, review_body, designer, category]
+    )
+    .then(result => {
+      return result.rows[0];
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};

@@ -8,7 +8,8 @@ const {
   fetchReviews,
   fetchReviewComments,
   insertReviewComment,
-  fetchReviewsCount
+  fetchReviewsCount,
+  insertReview
 } = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
@@ -79,6 +80,17 @@ exports.postReviewComment = (req, res, next) => {
   Promise.all([insertReviewComment(review_id, comment), rejectIfNaN('review_id', review_id)])
     .then(result => {
       res.status(201).send({ comment: result[0] });
+    })
+    .catch(next);
+};
+
+exports.postReview = (req, res, next) => {
+  const review = req.body;
+  //Need to add error handling
+
+  Promise.all([insertReview(review)])
+    .then(result => {
+      res.status(201).send({ review: result[0] });
     })
     .catch(next);
 };
