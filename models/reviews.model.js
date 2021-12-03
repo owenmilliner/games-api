@@ -137,12 +137,6 @@ exports.insertReviewComment = (review_id, comment) => {
 exports.insertReview = review => {
   const { owner, title, review_body, designer, category } = review;
 
-  console.log(owner);
-  console.log(title);
-  console.log(review_body);
-  console.log(designer);
-  console.log(category);
-
   return db
     .query(
       `

@@ -1,7 +1,8 @@
 const {
   rejectIfNaN,
   rejectIfInvalidQueryParameter,
-  rejectIfInvalidProperties
+  rejectIfInvalidProperties,
+  rejectIfKeyMissing
 } = require('../models/error-handling/manage-errors');
 const {
   fetchReviewById,
@@ -25,10 +26,11 @@ exports.getReviewById = (req, res, next) => {
 
 exports.patchReviewById = (req, res, next) => {
   const { review_id } = req.params;
-  const newVotes = req.body;
+  const newVotes = req.body || {};
 
   Promise.all([
     updateReviewById(newVotes, review_id),
+    rejectIfKeyMissing(['inc_votes'], newVotes),
     rejectIfNaN('review_id', review_id),
     rejectIfNaN('vote increment value', newVotes.inc_votes)
   ])

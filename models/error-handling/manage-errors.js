@@ -1,3 +1,14 @@
+exports.rejectIfKeyMissing = (keys, object) => {
+  for (const key of keys) {
+    if (!object.hasOwnProperty(key)) {
+      return Promise.reject({
+        errorCode: 400,
+        errorMessage: `Missing object property: ${key}`
+      });
+    }
+  }
+};
+
 exports.rejectIfNaN = (property, value) => {
   if (isNaN(Number(value)) || Number(value) % 1 !== 0) {
     return Promise.reject({

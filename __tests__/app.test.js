@@ -178,6 +178,19 @@ describe('PATCH /api/reviews/:review_id', () => {
         expect(body.errorMessage).toBe('Invalid vote increment value: ten. Must be a number.');
       });
   });
+
+  test("400: Responds with an error when 'inc_votes' key does not exist in given object,", () => {
+    const id = 1;
+    const newVotes = {};
+
+    return request(app)
+      .patch(`/api/reviews/${id}`)
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe(`Missing object property: inc_votes`);
+      });
+  });
 });
 
 describe('GET /api/reviews', () => {
