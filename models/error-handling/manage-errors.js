@@ -60,3 +60,30 @@ exports.rejectIfInvalidQueryParameter = queries => {
     });
   }
 };
+
+exports.rejectIfInvalidProperties = review => {
+  if (
+    !review.hasOwnProperty('owner') ||
+    !review.hasOwnProperty('title') ||
+    !review.hasOwnProperty('review_body') ||
+    !review.hasOwnProperty('designer') ||
+    !review.hasOwnProperty('category')
+  ) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage:
+        'Missing property in review object. Must contain: owner, title, review_body, designer and category.'
+    });
+  } else if (
+    typeof review.owner !== 'string' ||
+    typeof review.title !== 'string' ||
+    typeof review.review_body !== 'string' ||
+    typeof review.designer !== 'string' ||
+    typeof review.category !== 'string'
+  ) {
+    return Promise.reject({
+      errorCode: 400,
+      errorMessage: 'Invalid data type in review object. Each value must be passed as a string.'
+    });
+  }
+};

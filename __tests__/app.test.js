@@ -85,7 +85,7 @@ describe('GET /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
+  test('400: Responds with an error when an invalid review_id type is entered.', () => {
     const id = 'bananas';
 
     return request(app)
@@ -97,7 +97,7 @@ describe('GET /api/reviews/:review_id', () => {
       });
   });
 
-  test('404: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered. ', () => {
+  test('404: Responds with an error when a valid, but non-existent review_id is entered. ', () => {
     const id = 1000;
 
     return request(app)
@@ -140,7 +140,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when an invalid review_id type is entered.', () => {
+  test('400: Responds with an error when an invalid review_id type is entered.', () => {
     const newVotes = { inc_votes: 99 };
     const id = 'bananas';
 
@@ -153,7 +153,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       });
   });
 
-  test('404: Responds with an errorCode and errorMessage when a valid, but non-existent review_id is entered.', () => {
+  test('404: Responds with an error when a valid, but non-existent review_id is entered.', () => {
     const newVotes = { inc_votes: 99 };
     const id = 1000;
 
@@ -166,7 +166,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when an invalid vote increment type is entered.', () => {
+  test('400: Responds with an error when an invalid vote increment type is entered.', () => {
     const newVotes = { inc_votes: 'ten' };
     const id = 1000;
 
@@ -253,7 +253,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('400: Responds with an errorCode and errorMessage when passed an invalid sort value.', () => {
+      test('400: Responds with an error when passed an invalid sort value.', () => {
         return request(app)
           .get('/api/reviews?sort=bananas')
           .expect(400)
@@ -291,7 +291,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('400: Responds with an errorCode and errorMessage when passed an invalid order value.', () => {
+      test('400: Responds with an error when passed an invalid order value.', () => {
         return request(app)
           .get('/api/reviews?order=bananas')
           .expect(400)
@@ -336,7 +336,7 @@ describe('GET /api/reviews', () => {
           });
       });
 
-      test('400: Responds with an errorCode and errorMessage when passed an invalid category value.', () => {
+      test('400: Responds with an error when passed an invalid category value.', () => {
         return request(app)
           .get('/api/reviews?category=bananas')
           .expect(400)
@@ -483,7 +483,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('404: Responds with an errorCode and errorMessage when a valid review_id is entered, but there are no comments found.', () => {
+  test('404: Responds with an error when a valid review_id is entered, but there are no comments found.', () => {
     const id = 1;
 
     return request(app)
@@ -494,7 +494,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when an invalid review_id is entered.', () => {
+  test('400: Responds with an error when an invalid review_id is entered.', () => {
     const id = 'bananas';
 
     return request(app)
@@ -505,7 +505,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('400: Responds with an errorCode and errorMessage when a float number is passed as a review_id.', () => {
+  test('400: Responds with an error when a float number is passed as a review_id.', () => {
     const id = '2.5';
 
     return request(app)
@@ -553,7 +553,7 @@ describe('DELETE /api/comments/comment_id', () => {
     return request(app).delete(`/api/comments/${id}`).expect(204);
   });
 
-  test('404: Responds with errorCode and errorMessage when given a non-existent comment_id.', () => {
+  test('404: Responds with error when given a non-existent comment_id.', () => {
     const id = 10;
 
     return request(app)
@@ -603,7 +603,7 @@ describe('GET /api/users/:username', () => {
       });
   });
 
-  test('404: Responds with an errorCode and errorMessage when the user does not exist.', () => {
+  test('404: Responds with an error when the user does not exist.', () => {
     const username = 'owen';
 
     return request(app)
@@ -667,6 +667,45 @@ describe('POST /api/reviews', () => {
               votes: 0
             }
           })
+        );
+      });
+  });
+
+  test('400: Responds with an error when given a review object with missing properties.', () => {
+    const review = {
+      owner: 'mallionaire',
+      title: 'Timeless classic.',
+      designer: 'OpenTTD',
+      category: 'dexterity'
+    };
+
+    return request(app)
+      .post('/api/reviews')
+      .send(review)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe(
+          'Missing property in review object. Must contain: owner, title, review_body, designer and category.'
+        );
+      });
+  });
+
+  test('400: Responds with an error when given a review object with invalid data types.', () => {
+    const review = {
+      owner: 'mallionaire',
+      title: 10,
+      review_body: `OpenTTD is a game which was created in 2004, yet somehow still holds it's weight as one of the greatest transport management games ever created.`,
+      designer: 'OpenTTD',
+      category: 'dexterity'
+    };
+
+    return request(app)
+      .post('/api/reviews')
+      .send(review)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe(
+          'Invalid data type in review object. Each value must be passed as a string.'
         );
       });
   });

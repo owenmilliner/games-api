@@ -1,6 +1,7 @@
 const {
   rejectIfNaN,
-  rejectIfInvalidQueryParameter
+  rejectIfInvalidQueryParameter,
+  rejectIfInvalidProperties
 } = require('../models/error-handling/manage-errors');
 const {
   fetchReviewById,
@@ -86,9 +87,8 @@ exports.postReviewComment = (req, res, next) => {
 
 exports.postReview = (req, res, next) => {
   const review = req.body;
-  //Need to add error handling
 
-  Promise.all([insertReview(review)])
+  Promise.all([insertReview(review), rejectIfInvalidProperties(review)])
     .then(result => {
       res.status(201).send({ review: result[0] });
     })
