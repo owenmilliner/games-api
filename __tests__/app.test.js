@@ -366,6 +366,16 @@ describe('GET /api/reviews', () => {
             expect(body.reviews).toBeSorted({ key: 'created_at', descending: true });
           });
       });
+
+      test('200: Responds with an OK response but no results when passed a valid category without results.', () => {
+        return request(app)
+          .get('/api/reviews?category=hidden-roles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews).toEqual([]);
+          });
+      });
     });
 
     describe('Pagination', () => {
