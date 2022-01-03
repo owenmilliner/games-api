@@ -506,14 +506,15 @@ describe('GET /api/reviews/:review_id/comments', () => {
       });
   });
 
-  test('404: Responds with an error when a valid review_id is entered, but there are no comments found.', () => {
+  test('200: Responds with an empty comments array when a valid review_id is entered, but there are no comments found.', () => {
     const id = 1;
 
     return request(app)
       .get(`/api/reviews/${id}/comments`)
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.errorMessage).toBe('Non-existent comments for review_id: 1. Please try again.');
+        expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).toEqual([]);
       });
   });
 
