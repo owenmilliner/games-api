@@ -578,7 +578,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe.only("POST /api/reviews/:review_id/comments", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   test("201: Responds with a newly created comment object.", () => {
     const id = 1;
     const comment = {
@@ -669,6 +669,50 @@ describe.only("POST /api/reviews/:review_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.errorMessage).toBe("Missing object property: body");
+      });
+  });
+
+  test.skip("404: Responds with an error when passed an invalid username.", () => {
+    const id = 1;
+    const comment = {
+      username: "baines",
+    };
+
+    return request(app)
+      .post(`/api/reviews/${id}/comments`)
+      .send(comment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe("Username does not exist: baines");
+      });
+  });
+
+  test("201: Responds with a newly created comment object ignoring unnecessary properties.", () => {
+    const id = 1;
+    const comment = {
+      username: "bainesface",
+      body: "Absolutely incredible!",
+      age: 23,
+      likes: 1000000,
+    };
+
+    return request(app)
+      .post(`/api/reviews/${id}/comments`)
+      .send(comment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(
+          expect.objectContaining({
+            comment: {
+              comment_id: expect.any(Number),
+              body: "Absolutely incredible!",
+              votes: 0,
+              author: "bainesface",
+              review_id: 1,
+              created_at: expect.any(String),
+            },
+          })
+        );
       });
   });
 });

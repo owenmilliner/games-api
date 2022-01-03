@@ -3,7 +3,7 @@ const {
   rejectIfInvalidQueryParameter,
   rejectIfInvalidProperties,
   rejectIfKeyMissing,
-  rejectIfNonExistent,
+  rejectIfInvalidUsername,
 } = require("../models/error-handling/manage-errors");
 const {
   fetchReviewById,
