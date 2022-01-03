@@ -541,7 +541,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
   });
 });
 
-describe('POST /api/reviews/:review_id/comments', () => {
+describe.only('POST /api/reviews/:review_id/comments', () => {
   test('201: Responds with a newly created comment object.', () => {
     const id = 1;
     const comment = {
@@ -566,6 +566,22 @@ describe('POST /api/reviews/:review_id/comments', () => {
             }
           })
         );
+      });
+  });
+
+  test('400: Responds with an error when passed an invalid ID.', () => {
+    const id = "bananas";
+    const comment = {
+      username: 'bainesface',
+      body: 'Absolutely incredible!'
+    };
+
+    return request(app)
+      .post(`/api/reviews/${id}/comments`)
+      .send(comment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
       });
   });
 });
