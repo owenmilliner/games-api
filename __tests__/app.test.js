@@ -587,6 +587,17 @@ describe('DELETE /api/comments/comment_id', () => {
         expect(body.errorMessage).toBe('Non-existent comment_id: 10. Please try again.');
       });
   });
+
+  test('400: Responds with error when given an invalid comment_id.', () => {
+    const id = "bananas";
+
+    return request(app)
+      .delete(`/api/comments/${id}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Invalid comment_id: bananas. Must be a number.');
+      });
+  });
 });
 
 describe('GET /api/users', () => {
