@@ -1,7 +1,7 @@
-const db = require('../db/connection');
-const { rejectIfNonExistent } = require('./error-handling/manage-errors');
+const db = require("../db/connection");
+const { rejectIfNonExistent } = require("./error-handling/manage-errors");
 
-exports.fetchReviewById = review_id => {
+exports.fetchReviewById = (review_id) => {
   return db
     .query(
       `SELECT reviews.*, 
@@ -9,9 +9,9 @@ exports.fetchReviewById = review_id => {
        FROM reviews WHERE review_id = $1`,
       [review_id]
     )
-    .then(result => {
+    .then((result) => {
       if (result.rowCount === 0) {
-        return rejectIfNonExistent('review_id', review_id);
+        return rejectIfNonExistent("review_id", review_id);
       } else {
         return result.rows[0];
       }
@@ -28,20 +28,20 @@ exports.updateReviewById = (votesIncrease, review_id) => {
       RETURNING *;`,
       [votesIncrease.inc_votes, review_id]
     )
-    .then(result => {
+    .then((result) => {
       if (result.rowCount === 0) {
-        return rejectIfNonExistent('review_id', review_id);
+        return rejectIfNonExistent("review_id", review_id);
       } else {
         return result.rows[0];
       }
     });
 };
 
-exports.fetchReviews = queries => {
+exports.fetchReviews = (queries) => {
   const sort = queries.sort.toLowerCase();
   const order = queries.order.toUpperCase();
   const category = queries.category.toLowerCase();
-  category.replace(/^%20$/g, ' ');
+  category.replace(/^%20$/g, " ");
   const { limit } = queries;
 
   let page = queries.page * limit;
@@ -65,12 +65,12 @@ exports.fetchReviews = queries => {
     LIMIT ${queries.limit} OFFSET ${page}
     ;`
     )
-    .then(result => {
+    .then((result) => {
       return result.rows;
     });
 };
 
-exports.fetchReviewsCount = queries => {
+exports.fetchReviewsCount = (queries) => {
   const category = queries.category.toLowerCase();
 
   return db
@@ -82,7 +82,7 @@ exports.fetchReviewsCount = queries => {
         WHERE category LIKE '${category}'
         ;`
     )
-    .then(result => {
+    .then((result) => {
       if (queries.total_count) {
         return result.rows[0];
       } else {
@@ -91,7 +91,7 @@ exports.fetchReviewsCount = queries => {
     });
 };
 
-exports.fetchReviewComments = review_id => {
+exports.fetchReviewComments = (review_id) => {
   return db
     .query(
       `
@@ -106,31 +106,33 @@ exports.fetchReviewComments = review_id => {
      ;`,
       [review_id]
     )
-    .then(result => {
-        return result.rows;
+    .then((result) => {
+      return result.rows;
     });
 };
 
 exports.insertReviewComment = (review_id, comment) => {
   const { username, body } = comment;
 
-  return db
-    .query(
-      `
-        INSERT INTO comments
-            (author, review_id, body)
-        VALUES
-            ($1, $2, $3)
-        RETURNING *
-       ;`,
-      [username, review_id, body]
-    )
-    .then(result => {
+  return this.fetchReviewById(review_id)
+    .then(() => {
+      return db.query(
+        `
+      INSERT INTO comments
+      (author, review_id, body)
+      VALUES
+      ($1, $2, $3)
+      RETURNING *
+      ;`,
+        [username, review_id, body]
+      );
+    })
+    .then((result) => {
       return result.rows[0];
     });
 };
 
-exports.insertReview = review => {
+exports.insertReview = (review) => {
   const { owner, title, review_body, designer, category } = review;
 
   return db
@@ -153,10 +155,10 @@ exports.insertReview = review => {
        ;`,
       [owner, title, review_body, designer, category]
     )
-    .then(result => {
+    .then((result) => {
       return result.rows[0];
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 };

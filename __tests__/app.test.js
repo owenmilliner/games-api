@@ -584,6 +584,22 @@ describe.only('POST /api/reviews/:review_id/comments', () => {
         expect(body.errorMessage).toBe('Invalid review_id: bananas. Must be a number.');
       });
   });
+
+  test('404: Responds with an error when passed a valid, but non-existent ID.', () => {
+    const id = 999;
+    const comment = {
+      username: 'bainesface',
+      body: 'Absolutely incredible!'
+    };
+
+    return request(app)
+      .post(`/api/reviews/${id}/comments`)
+      .send(comment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe('Non-existent review_id: 999. Please try again.');
+      });
+  });
 });
 
 describe('DELETE /api/comments/comment_id', () => {
