@@ -899,3 +899,37 @@ describe('POST /api/reviews', () => {
       });
   });
 });
+
+describe.only('DELETE /api/reviews/review_id', () => {
+  test('204: Responds with no content, and deletes the review of the given id.', () => {
+    const id = 1;
+
+    return request(app).delete(`/api/reviews/${id}`).expect(204);
+  });
+
+  test('404: Responds with error when given a non-existent review_id.', () => {
+    const id = 423442;
+
+    return request(app)
+      .delete(`/api/reviews/${id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe(
+          'Non-existent review_id: 423442. Please try again.'
+        );
+      });
+  });
+
+  test('400: Responds with error when given an invalid review_id.', () => {
+    const id = 'bananas';
+
+    return request(app)
+      .delete(`/api/reviews/${id}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.errorMessage).toBe(
+          'Invalid review_id: bananas. Must be a number.'
+        );
+      });
+  });
+});

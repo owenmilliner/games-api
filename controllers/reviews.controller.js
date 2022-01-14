@@ -4,7 +4,7 @@ const {
   rejectIfInvalidProperties,
   rejectIfKeyMissing,
   rejectIfInvalidUsername,
-} = require("../models/error-handling/manage-errors");
+} = require('../models/error-handling/manage-errors');
 const {
   fetchReviewById,
   updateReviewById,
@@ -13,12 +13,13 @@ const {
   insertReviewComment,
   fetchReviewsCount,
   insertReview,
-} = require("../models/reviews.model");
+  removeReviewById,
+} = require('../models/reviews.model');
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
 
-  Promise.all([fetchReviewById(review_id), rejectIfNaN("review_id", review_id)])
+  Promise.all([fetchReviewById(review_id), rejectIfNaN('review_id', review_id)])
     .then((result) => {
       res.status(200).send({ review: result[0] });
     })
@@ -31,9 +32,9 @@ exports.patchReviewById = (req, res, next) => {
 
   Promise.all([
     updateReviewById(newVotes, review_id),
-    rejectIfKeyMissing(["inc_votes"], newVotes),
-    rejectIfNaN("review_id", review_id),
-    rejectIfNaN("vote increment value", newVotes.inc_votes),
+    rejectIfKeyMissing(['inc_votes'], newVotes),
+    rejectIfNaN('review_id', review_id),
+    rejectIfNaN('vote increment value', newVotes.inc_votes),
   ])
     .then((result) => {
       res.status(200).send({ review: result[0] });
@@ -43,9 +44,9 @@ exports.patchReviewById = (req, res, next) => {
 
 exports.getReviews = (req, res, next) => {
   const queries = {};
-  queries.sort = req.query.sort || "created_at";
-  queries.order = req.query.order || "DESC";
-  queries.category = req.query.category || "%";
+  queries.sort = req.query.sort || 'created_at';
+  queries.order = req.query.order || 'DESC';
+  queries.category = req.query.category || '%';
   queries.limit = req.query.limit || 10;
   queries.page = req.query.page || 1;
   queries.total_count = req.query.total_count || false;
@@ -53,8 +54,8 @@ exports.getReviews = (req, res, next) => {
   Promise.all([
     fetchReviews(queries),
     fetchReviewsCount(queries),
-    rejectIfNaN("limit", queries.limit),
-    rejectIfNaN("page", queries.page),
+    rejectIfNaN('limit', queries.limit),
+    rejectIfNaN('page', queries.page),
     rejectIfInvalidQueryParameter(queries),
   ])
     .then((result) => {
@@ -74,7 +75,7 @@ exports.getReviewComments = (req, res, next) => {
 
   Promise.all([
     fetchReviewComments(review_id),
-    rejectIfNaN("review_id", review_id),
+    rejectIfNaN('review_id', review_id),
   ])
     .then((result) => {
       res.status(200).send({ comments: result[0] });
@@ -88,8 +89,8 @@ exports.postReviewComment = (req, res, next) => {
 
   Promise.all([
     insertReviewComment(review_id, comment),
-    rejectIfNaN("review_id", review_id),
-    rejectIfKeyMissing(["username", "body"], comment),
+    rejectIfNaN('review_id', review_id),
+    rejectIfKeyMissing(['username', 'body'], comment),
   ])
     .then((result) => {
       res.status(201).send({ comment: result[0] });
@@ -103,6 +104,19 @@ exports.postReview = (req, res, next) => {
   Promise.all([insertReview(review), rejectIfInvalidProperties(review)])
     .then((result) => {
       res.status(201).send({ review: result[0] });
+    })
+    .catch(next);
+};
+
+exports.deleteReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+
+  Promise.all([
+    removeReviewById(review_id),
+    rejectIfNaN('review_id', review_id),
+  ])
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

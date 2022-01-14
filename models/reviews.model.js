@@ -1,5 +1,5 @@
-const db = require("../db/connection");
-const { rejectIfNonExistent } = require("./error-handling/manage-errors");
+const db = require('../db/connection');
+const { rejectIfNonExistent } = require('./error-handling/manage-errors');
 
 exports.fetchReviewById = (review_id) => {
   return db
@@ -11,7 +11,7 @@ exports.fetchReviewById = (review_id) => {
     )
     .then((result) => {
       if (result.rowCount === 0) {
-        return rejectIfNonExistent("review_id", review_id);
+        return rejectIfNonExistent('review_id', review_id);
       } else {
         return result.rows[0];
       }
@@ -30,7 +30,7 @@ exports.updateReviewById = (votesIncrease, review_id) => {
     )
     .then((result) => {
       if (result.rowCount === 0) {
-        return rejectIfNonExistent("review_id", review_id);
+        return rejectIfNonExistent('review_id', review_id);
       } else {
         return result.rows[0];
       }
@@ -41,7 +41,7 @@ exports.fetchReviews = (queries) => {
   const sort = queries.sort.toLowerCase();
   const order = queries.order.toUpperCase();
   const category = queries.category.toLowerCase();
-  category.replace(/^%20$/g, " ");
+  category.replace(/^%20$/g, ' ');
   const { limit } = queries;
 
   let page = queries.page * limit;
@@ -160,5 +160,17 @@ exports.insertReview = (review) => {
     })
     .catch((err) => {
       console.log(err);
+    });
+};
+
+exports.removeReviewById = (review_id) => {
+  return db
+    .query('DELETE FROM reviews WHERE review_id = $1 RETURNING *;', [review_id])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return rejectIfNonExistent('review_id', review_id);
+      } else {
+        return result.rows[0];
+      }
     });
 };
