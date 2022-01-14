@@ -31,7 +31,14 @@ exports.rejectIfInvalidQueryParameter = (queries) => {
   const category = queries.category.toLowerCase();
 
   if (
-    !['created_at', 'owner', 'review_id', 'category', 'votes'].includes(sort)
+    ![
+      'created_at',
+      'owner',
+      'review_id',
+      'category',
+      'votes',
+      'title',
+    ].includes(sort)
   ) {
     return Promise.reject({
       errorCode: 400,
